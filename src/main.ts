@@ -14,8 +14,10 @@ async function bootstrap() {
   );
 
   const swaggerConfig = new DocumentBuilder()
-    .setTitle("Family Tasks API")
-    .setDescription("Backend API for managing household tasks and rotations.")
+    .setTitle("Identity Auth API")
+    .setDescription(
+      "Reusable backend API for authentication, identity, applications, and sessions.",
+    )
     .setVersion("1.0.0")
     .build();
   const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);

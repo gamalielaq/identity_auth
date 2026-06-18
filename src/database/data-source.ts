@@ -1,5 +1,10 @@
-﻿import "dotenv/config";
+import "dotenv/config";
 import { DataSource } from "typeorm";
+import { Application } from "../modules/applications/entities/application.entity";
+import { UserApplication } from "../modules/applications/entities/user-application.entity";
+import { RefreshToken } from "../modules/sessions/entities/refresh-token.entity";
+import { Session } from "../modules/sessions/entities/session.entity";
+import { User } from "../modules/users/entities/user.entity";
 
 export default new DataSource({
   type: "mysql",
@@ -10,6 +15,6 @@ export default new DataSource({
   database: process.env.DB_DATABASE,
   synchronize: false,
   logging: process.env.DB_LOGGING === "true",
-  entities: ["src/**/*.entity.ts"],
+  entities: [User, Application, UserApplication, RefreshToken, Session],
   migrations: ["src/database/migrations/*.ts"],
 });
