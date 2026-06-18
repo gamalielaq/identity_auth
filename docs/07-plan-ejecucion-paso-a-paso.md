@@ -295,6 +295,11 @@ Resultado:
 - Verificado con `npm.cmd test`.
 - Verificado con `npm.cmd run lint`.
 - Verificado levantando la app y consultando `/api-json`, con respuesta `200` y `9` rutas documentadas.
+- DTOs documentados con `@ApiProperty` y `@ApiPropertyOptional` para que Swagger muestre propiedades y `Example Value` correctamente en:
+  - users
+  - task-categories
+  - tasks
+  - task-rotations
 
 Nota:
 
