@@ -2,12 +2,12 @@
   ConflictException,
   Injectable,
   NotFoundException,
-} from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { CreateTaskCategoryDto } from './dto/create-task-category.dto';
-import { UpdateTaskCategoryDto } from './dto/update-task-category.dto';
-import { TaskCategory } from './entities/task-category.entity';
+} from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { CreateTaskCategoryDto } from "./dto/create-task-category.dto";
+import { UpdateTaskCategoryDto } from "./dto/update-task-category.dto";
+import { TaskCategory } from "./entities/task-category.entity";
 
 @Injectable()
 export class TaskCategoriesService {
@@ -31,7 +31,7 @@ export class TaskCategoriesService {
 
   findAll(): Promise<TaskCategory[]> {
     return this.taskCategoriesRepository.find({
-      order: { name: 'ASC' },
+      order: { name: "ASC" },
     });
   }
 

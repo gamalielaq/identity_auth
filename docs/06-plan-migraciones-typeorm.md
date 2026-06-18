@@ -57,7 +57,7 @@ npm run migration:generate -- src/database/migrations/InitialSchema
 
 La migración inicial debe crear:
 
-- `users`
+- `family_members`
 - `task_categories`
 - `tasks`
 - `task_rotation_members`
@@ -87,3 +87,4 @@ Este comando revierte la última migración aplicada.
 - Cada cambio estructural debe tener su propia migración.
 - Las migraciones deben revisarse antes de ejecutarse en ambientes compartidos.
 - Las entidades y las migraciones deben evolucionar juntas.
+

@@ -1,11 +1,11 @@
-﻿import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { TaskRecurrenceType } from '../common/enums/task-recurrence-type.enum';
-import { TaskCategory } from '../task-categories/entities/task-category.entity';
-import { CreateTaskDto } from './dto/create-task.dto';
-import { UpdateTaskDto } from './dto/update-task.dto';
-import { Task } from './entities/task.entity';
+﻿import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { TaskRecurrenceType } from "../common/enums/task-recurrence-type.enum";
+import { TaskCategory } from "../task-categories/entities/task-category.entity";
+import { CreateTaskDto } from "./dto/create-task.dto";
+import { UpdateTaskDto } from "./dto/update-task.dto";
+import { Task } from "./entities/task.entity";
 
 @Injectable()
 export class TasksService {
@@ -33,7 +33,7 @@ export class TasksService {
   findAll(): Promise<Task[]> {
     return this.tasksRepository.find({
       relations: { category: true },
-      order: { title: 'ASC' },
+      order: { title: "ASC" },
     });
   }
 

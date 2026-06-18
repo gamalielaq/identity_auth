@@ -7,13 +7,13 @@
   ParseUUIDPipe,
   Patch,
   Post,
-} from '@nestjs/common';
-import { CreateTaskCategoryDto } from './dto/create-task-category.dto';
-import { UpdateTaskCategoryDto } from './dto/update-task-category.dto';
-import { TaskCategory } from './entities/task-category.entity';
-import { TaskCategoriesService } from './task-categories.service';
+} from "@nestjs/common";
+import { CreateTaskCategoryDto } from "./dto/create-task-category.dto";
+import { UpdateTaskCategoryDto } from "./dto/update-task-category.dto";
+import { TaskCategory } from "./entities/task-category.entity";
+import { TaskCategoriesService } from "./task-categories.service";
 
-@Controller('task-categories')
+@Controller("task-categories")
 export class TaskCategoriesController {
   constructor(private readonly taskCategoriesService: TaskCategoriesService) {}
 
@@ -33,17 +33,17 @@ export class TaskCategoriesController {
     return { data: taskCategories };
   }
 
-  @Get(':id')
+  @Get(":id")
   async findOne(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param("id", ParseUUIDPipe) id: string,
   ): Promise<{ data: TaskCategory }> {
     const taskCategory = await this.taskCategoriesService.findOne(id);
     return { data: taskCategory };
   }
 
-  @Patch(':id')
+  @Patch(":id")
   async update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param("id", ParseUUIDPipe) id: string,
     @Body() updateTaskCategoryDto: UpdateTaskCategoryDto,
   ): Promise<{ data: TaskCategory }> {
     const taskCategory = await this.taskCategoriesService.update(
@@ -53,11 +53,11 @@ export class TaskCategoriesController {
     return { data: taskCategory };
   }
 
-  @Delete(':id')
+  @Delete(":id")
   async remove(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param("id", ParseUUIDPipe) id: string,
   ): Promise<{ data: null; message: string }> {
     await this.taskCategoriesService.remove(id);
-    return { data: null, message: 'Task category deleted successfully' };
+    return { data: null, message: "Task category deleted successfully" };
   }
 }

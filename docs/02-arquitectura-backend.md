@@ -22,12 +22,12 @@ src/
     enums/
     filters/
     interceptors/
-  users/
+  members/
     dto/
     entities/
-    users.controller.ts
-    users.module.ts
-    users.service.ts
+    members.controller.ts
+    members.module.ts
+    members.service.ts
   task-categories/
     dto/
     entities/
@@ -67,7 +67,7 @@ src/
 
 ## Módulos por dominio
 
-- `users`: miembros de la familia.
+- `family_members`: miembros de la familia.
 - `task-categories`: agrupación de tareas.
 - `tasks`: definición de tareas recurrentes.
 - `task-rotations`: miembros que participan en la rotación de una tarea.
@@ -98,3 +98,4 @@ Riesgos:
 - Es riesgoso para producción y datos reales.
 
 Decisión: usar `synchronize: false` siempre como práctica base y crear tablas mediante migraciones.
+

@@ -4,7 +4,7 @@ El modelo inicial cubre miembros, categorías, tareas recurrentes, rotación de 
 
 ## Tablas principales
 
-### `users`
+### `family_members`
 
 Representa a un miembro de la familia.
 
@@ -49,13 +49,13 @@ Define una tarea recurrente.
 
 ### `task_rotation_members`
 
-Define qué usuarios participan en la rotación de una tarea y en qué orden.
+Define qué miembros participan en la rotación de una tarea y en qué orden.
 
 | Campo | Tipo | Notas |
 |---|---|---|
 | `id` | uuid | Primary key. |
 | `task_id` | uuid | FK a `tasks`. |
-| `user_id` | uuid | FK a `users`. |
+| `member_id` | uuid | FK a `family_members`. |
 | `position` | int | Orden dentro de la rotación. |
 | `is_active` | boolean | Permite pausar un miembro en una rotación. |
 | `created_at` | timestamp | Fecha de creación. |
@@ -63,13 +63,13 @@ Define qué usuarios participan en la rotación de una tarea y en qué orden.
 
 ### `task_assignments`
 
-Representa una instancia concreta de una tarea asignada a un usuario en una fecha.
+Representa una instancia concreta de una tarea asignada a un miembro en una fecha.
 
 | Campo | Tipo | Notas |
 |---|---|---|
 | `id` | uuid | Primary key. |
 | `task_id` | uuid | FK a `tasks`. |
-| `assigned_user_id` | uuid | FK a `users`. |
+| `assigned_member_id` | uuid | FK a `family_members`. |
 | `scheduled_for` | date | Fecha programada. |
 | `status` | enum | Estado de la asignación. |
 | `completed_at` | timestamp nullable | Fecha de finalización. |
@@ -85,7 +85,7 @@ Historial de cambios relevantes de una asignación.
 |---|---|---|
 | `id` | uuid | Primary key. |
 | `assignment_id` | uuid | FK a `task_assignments`. |
-| `changed_by_user_id` | uuid nullable | FK a `users`. Nullable hasta tener autenticación. |
+| `changed_by_member_id` | uuid nullable | FK a `family_members`. Nullable hasta tener autenticación. |
 | `from_status` | enum nullable | Estado anterior. |
 | `to_status` | enum | Estado nuevo. |
 | `message` | text nullable | Motivo o detalle. |
@@ -133,15 +133,15 @@ enum TaskAssignmentStatus {
 - Una categoría tiene muchas tareas.
 - Una tarea pertenece opcionalmente a una categoría.
 - Una tarea tiene muchos miembros de rotación.
-- Un usuario puede participar en muchas rotaciones.
+- Un miembro puede participar en muchas rotaciones.
 - Una tarea tiene muchas asignaciones.
-- Un usuario puede tener muchas asignaciones.
+- Un miembro puede tener muchas asignaciones.
 - Una asignación tiene muchos logs.
 
 ## Diagrama textual
 
 ```txt
-users
+Members
   ├─< task_rotation_members >─ tasks >─ task_categories
   └─< task_assignments >───────┘
            └─< task_assignment_logs
@@ -149,10 +149,11 @@ users
 
 ## Reglas de negocio base
 
-- Un usuario representa a un miembro de la familia.
+- Un miembro representa a un miembro de la familia.
 - Una tarea puede repetirse semanalmente.
 - Una tarea puede tener una rotación de miembros.
 - La API debe poder generar asignaciones futuras.
 - Una asignación puede estar pendiente, completada, omitida o vencida.
 - Todo cambio relevante de estado debe quedar en historial.
 - No se debe borrar físicamente información importante si afecta historial.
+

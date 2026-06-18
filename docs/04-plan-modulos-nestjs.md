@@ -33,7 +33,7 @@ Archivos esperados:
 
 Endpoints: ninguno.
 
-## `users`
+## `family_members`
 
 Responsabilidad:
 
@@ -41,28 +41,28 @@ Responsabilidad:
 
 Controller:
 
-- `UsersController`
+- `MembersController`
 
 Service:
 
-- `UsersService`
+- `MembersService`
 
 Entities:
 
-- `User`
+- `FamilyMember`
 
 DTOs:
 
-- `CreateUserDto`
-- `UpdateUserDto`
+- `CreateMemberDto`
+- `UpdateMemberDto`
 
 Endpoints aproximados:
 
-- `POST /users`
-- `GET /users`
-- `GET /users/:id`
-- `PATCH /users/:id`
-- `DELETE /users/:id` o desactivación lógica.
+- `POST /members`
+- `GET /members`
+- `GET /members/:id`
+- `PATCH /members/:id`
+- `DELETE /members/:id` o desactivación lógica.
 
 ## `task-categories`
 
@@ -154,7 +154,7 @@ Endpoints aproximados:
 
 - `PUT /tasks/:taskId/rotation`
 - `GET /tasks/:taskId/rotation`
-- `DELETE /tasks/:taskId/rotation/:userId`
+- `DELETE /tasks/:taskId/rotation/:memberId`
 
 ## `task-assignments`
 
@@ -192,3 +192,4 @@ Endpoints aproximados:
 - `PATCH /task-assignments/:id/complete`
 - `PATCH /task-assignments/:id/skip`
 - `GET /task-assignments/:id/logs`
+

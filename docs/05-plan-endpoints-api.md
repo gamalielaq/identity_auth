@@ -24,14 +24,14 @@ Para listados:
 }
 ```
 
-## Users
+## Members
 
-### Crear usuario
+### Crear miembro
 
 | Campo | Valor |
 |---|---|
 | Método | `POST` |
-| Ruta | `/users` |
+| Ruta | `/members` |
 | Descripción | Crea un miembro de la familia. |
 
 Request body:
@@ -56,12 +56,12 @@ Response esperado:
 }
 ```
 
-### Listar usuarios
+### Listar miembros
 
 | Campo | Valor |
 |---|---|
 | Método | `GET` |
-| Ruta | `/users` |
+| Ruta | `/members` |
 | Descripción | Lista miembros activos. |
 
 Response esperado:
@@ -154,15 +154,15 @@ Response esperado:
 |---|---|
 | Método | `PUT` |
 | Ruta | `/tasks/:taskId/rotation` |
-| Descripción | Define los usuarios que rotan en una tarea y su orden. |
+| Descripción | Define los miembros que rotan en una tarea y su orden. |
 
 Request body:
 
 ```json
 {
   "members": [
-    { "userId": "uuid-user-1", "position": 1 },
-    { "userId": "uuid-user-2", "position": 2 }
+    { "memberId": "uuid-member-1", "position": 1 },
+    { "memberId": "uuid-member-2", "position": 2 }
   ]
 }
 ```
@@ -174,8 +174,8 @@ Response esperado:
   "data": {
     "taskId": "uuid-task",
     "members": [
-      { "userId": "uuid-user-1", "position": 1 },
-      { "userId": "uuid-user-2", "position": 2 }
+      { "memberId": "uuid-member-1", "position": 1 },
+      { "memberId": "uuid-member-2", "position": 2 }
     ]
   }
 }
@@ -227,7 +227,7 @@ Response esperado:
     {
       "id": "uuid",
       "task": { "id": "uuid", "title": "Limpiar cocina" },
-      "assignedUser": { "id": "uuid", "name": "Ana" },
+      "assignedMember": { "id": "uuid", "name": "Ana" },
       "scheduledFor": "2026-06-27",
       "status": "pending"
     }
@@ -313,3 +313,4 @@ Response esperado:
   ]
 }
 ```
+

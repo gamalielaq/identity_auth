@@ -1,3 +1,3 @@
 ﻿export enum TaskRecurrenceType {
-  WEEKLY = 'weekly',
+  WEEKLY = "weekly",
 }

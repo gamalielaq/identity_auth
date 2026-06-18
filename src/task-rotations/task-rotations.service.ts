@@ -2,13 +2,13 @@
   BadRequestException,
   Injectable,
   NotFoundException,
-} from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, In, Repository } from 'typeorm';
-import { Task } from '../tasks/entities/task.entity';
-import { User } from '../users/entities/user.entity';
-import { SetTaskRotationDto } from './dto/set-task-rotation.dto';
-import { TaskRotationMember } from './entities/task-rotation-member.entity';
+} from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { DataSource, In, Repository } from "typeorm";
+import { FamilyMember } from "../members/entities/family-member.entity";
+import { Task } from "../tasks/entities/task.entity";
+import { SetTaskRotationDto } from "./dto/set-task-rotation.dto";
+import { TaskRotationMember } from "./entities/task-rotation-member.entity";
 
 @Injectable()
 export class TaskRotationsService {
@@ -18,8 +18,8 @@ export class TaskRotationsService {
     private readonly taskRotationMembersRepository: Repository<TaskRotationMember>,
     @InjectRepository(Task)
     private readonly tasksRepository: Repository<Task>,
-    @InjectRepository(User)
-    private readonly usersRepository: Repository<User>,
+    @InjectRepository(FamilyMember)
+    private readonly membersRepository: Repository<FamilyMember>,
   ) {}
 
   async setRotation(
@@ -29,8 +29,8 @@ export class TaskRotationsService {
     await this.ensureTaskExists(taskId);
     this.ensureUniqueMembers(setTaskRotationDto);
     this.ensureUniquePositions(setTaskRotationDto);
-    await this.ensureUsersExist(
-      setTaskRotationDto.members.map((member) => member.userId),
+    await this.ensureMembersExist(
+      setTaskRotationDto.members.map((member) => member.memberId),
     );
 
     return this.dataSource.transaction(async (manager) => {
@@ -39,7 +39,7 @@ export class TaskRotationsService {
       const rotationMembers = setTaskRotationDto.members.map((member) =>
         manager.create(TaskRotationMember, {
           taskId,
-          userId: member.userId,
+          memberId: member.memberId,
           position: member.position,
           isActive: true,
         }),
@@ -49,8 +49,8 @@ export class TaskRotationsService {
 
       return manager.find(TaskRotationMember, {
         where: { taskId },
-        relations: { user: true },
-        order: { position: 'ASC' },
+        relations: { member: true },
+        order: { position: "ASC" },
       });
     });
   }
@@ -60,22 +60,22 @@ export class TaskRotationsService {
 
     return this.taskRotationMembersRepository.find({
       where: { taskId },
-      relations: { user: true },
-      order: { position: 'ASC' },
+      relations: { member: true },
+      order: { position: "ASC" },
     });
   }
 
-  async removeMember(taskId: string, userId: string): Promise<void> {
+  async removeMember(taskId: string, memberId: string): Promise<void> {
     await this.ensureTaskExists(taskId);
 
     const result = await this.taskRotationMembersRepository.delete({
       taskId,
-      userId,
+      memberId,
     });
 
     if (!result.affected) {
       throw new NotFoundException(
-        `User with id ${userId} is not part of the task rotation`,
+        `Member with id ${memberId} is not part of the task rotation`,
       );
     }
   }
@@ -88,29 +88,31 @@ export class TaskRotationsService {
     }
   }
 
-  private async ensureUsersExist(userIds: string[]): Promise<void> {
-    const users = await this.usersRepository.find({
-      where: { id: In(userIds), isActive: true },
+  private async ensureMembersExist(memberIds: string[]): Promise<void> {
+    const members = await this.membersRepository.find({
+      where: { id: In(memberIds), isActive: true },
       select: { id: true },
     });
-    const existingUserIds = new Set(users.map((user) => user.id));
-    const missingUserIds = userIds.filter(
-      (userId) => !existingUserIds.has(userId),
+    const existingMemberIds = new Set(members.map((member) => member.id));
+    const missingMemberIds = memberIds.filter(
+      (memberId) => !existingMemberIds.has(memberId),
     );
 
-    if (missingUserIds.length > 0) {
+    if (missingMemberIds.length > 0) {
       throw new NotFoundException(
-        `Users were not found or are inactive: ${missingUserIds.join(', ')}`,
+        `Members were not found or are inactive: ${missingMemberIds.join(", ")}`,
       );
     }
   }
 
   private ensureUniqueMembers(setTaskRotationDto: SetTaskRotationDto): void {
-    const userIds = setTaskRotationDto.members.map((member) => member.userId);
-    const uniqueUserIds = new Set(userIds);
+    const memberIds = setTaskRotationDto.members.map(
+      (member) => member.memberId,
+    );
+    const uniqueMemberIds = new Set(memberIds);
 
-    if (uniqueUserIds.size !== userIds.length) {
-      throw new BadRequestException('Rotation members must be unique');
+    if (uniqueMemberIds.size !== memberIds.length) {
+      throw new BadRequestException("Rotation members must be unique");
     }
   }
 
@@ -121,7 +123,7 @@ export class TaskRotationsService {
     const uniquePositions = new Set(positions);
 
     if (uniquePositions.size !== positions.length) {
-      throw new BadRequestException('Rotation positions must be unique');
+      throw new BadRequestException("Rotation positions must be unique");
     }
   }
 }

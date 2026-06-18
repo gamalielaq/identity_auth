@@ -1,7 +1,7 @@
-import { ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { AppModule } from './app.module';
+import { ValidationPipe } from "@nestjs/common";
+import { NestFactory } from "@nestjs/core";
+import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { AppModule } from "./app.module";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -14,12 +14,12 @@ async function bootstrap() {
   );
 
   const swaggerConfig = new DocumentBuilder()
-    .setTitle('Family Tasks API')
-    .setDescription('Backend API for managing household tasks and rotations.')
-    .setVersion('1.0.0')
+    .setTitle("Family Tasks API")
+    .setDescription("Backend API for managing household tasks and rotations.")
+    .setVersion("1.0.0")
     .build();
   const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('api', app, swaggerDocument);
+  SwaggerModule.setup("api", app, swaggerDocument);
 
   await app.listen(process.env.PORT ?? 3000);
 }

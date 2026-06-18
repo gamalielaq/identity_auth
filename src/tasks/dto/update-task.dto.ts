@@ -1,4 +1,4 @@
-﻿import { ApiPropertyOptional } from '@nestjs/swagger';
+﻿import { ApiPropertyOptional } from "@nestjs/swagger";
 import {
   IsBoolean,
   IsEnum,
@@ -7,13 +7,13 @@ import {
   IsUUID,
   MaxLength,
   MinLength,
-} from 'class-validator';
-import { DayOfWeek } from '../../common/enums/day-of-week.enum';
-import { TaskRecurrenceType } from '../../common/enums/task-recurrence-type.enum';
+} from "class-validator";
+import { DayOfWeek } from "../../common/enums/day-of-week.enum";
+import { TaskRecurrenceType } from "../../common/enums/task-recurrence-type.enum";
 
 export class UpdateTaskDto {
   @ApiPropertyOptional({
-    example: 'Limpiar cocina',
+    example: "Limpiar cocina",
     minLength: 2,
     maxLength: 160,
   })
@@ -24,7 +24,7 @@ export class UpdateTaskDto {
   title?: string;
 
   @ApiPropertyOptional({
-    example: 'Limpiar mesada, cocina y piso',
+    example: "Limpiar mesada, cocina y piso",
     maxLength: 1000,
     nullable: true,
   })
@@ -34,7 +34,7 @@ export class UpdateTaskDto {
   description?: string | null;
 
   @ApiPropertyOptional({
-    example: '550e8400-e29b-41d4-a716-446655440000',
+    example: "550e8400-e29b-41d4-a716-446655440000",
     nullable: true,
   })
   @IsOptional()

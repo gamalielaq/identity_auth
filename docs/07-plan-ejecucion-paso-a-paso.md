@@ -69,7 +69,7 @@ Objetivo:
 
 Checklist:
 
-- [x] Crear entidad `User`.
+- [x] Crear entidad `FamilyMember`.
 - [x] Crear entidad `TaskCategory`.
 - [x] Crear entidad `Task`.
 - [x] Crear entidad `TaskRotationMember`.
@@ -83,7 +83,7 @@ Resultado:
 - `.env` local creado desde `.env.example`.
 - Enums creados en `src/common/enums`.
 - Entidades creadas por dominio:
-  - `src/users/entities/user.entity.ts`
+  - `src/members/entities/family-member.entity.ts`
   - `src/task-categories/entities/task-category.entity.ts`
   - `src/tasks/entities/task.entity.ts`
   - `src/task-rotations/entities/task-rotation-member.entity.ts`
@@ -123,7 +123,7 @@ Resultado:
 - Migración inicial generada:
   - `src/database/migrations/1781802374016-InitialSchema.ts`
 - La migración crea:
-  - `users`
+  - `family_members`
   - `task_categories`
   - `tasks`
   - `task_rotation_members`
@@ -142,7 +142,7 @@ Nota:
 
 - `synchronize` sigue desactivado. La estructura de la base quedó creada por migración, como corresponde.
 
-## Fase 5: CRUD users y categorías
+## Fase 5: CRUD miembros y categorías
 
 Objetivo:
 
@@ -150,9 +150,9 @@ Objetivo:
 
 Checklist:
 
-- [x] Crear módulo `users`.
-- [x] Crear DTOs `CreateUserDto` y `UpdateUserDto`.
-- [x] Implementar CRUD básico de usuarios.
+- [x] Crear módulo `members`.
+- [x] Crear DTOs `CreateMemberDto` y `UpdateMemberDto`.
+- [x] Implementar CRUD básico de miembros.
 - [x] Crear módulo `task-categories`.
 - [x] Crear DTOs de categorías.
 - [x] Implementar CRUD básico de categorías.
@@ -165,19 +165,20 @@ Resultado:
   - `whitelist: true`
   - `forbidNonWhitelisted: true`
   - `transform: true`
-- Módulo `users` creado con controller, service, DTOs y repositorio TypeORM.
+- Módulo `members` creado con controller, service, DTOs y repositorio TypeORM.
 - Módulo `task-categories` creado con controller, service, DTOs y repositorio TypeORM.
-- `DELETE /users/:id` desactiva el usuario con `isActive = false` para preservar historial futuro.
+- `DELETE /members/:id` desactiva el miembro con `isActive = false` para preservar historial futuro.
 - `DELETE /task-categories/:id` elimina la categoría; las tareas futuras podrán quedar con `category_id = null` por la FK `ON DELETE SET NULL`.
 - Configuración runtime de TypeORM ajustada para registrar todas las entidades del modelo inicial, evitando errores de metadata en relaciones todavía no expuestas por módulos funcionales.
 - Build verificado con `npm.cmd run build`.
 - Tests verificados con `npm.cmd test`.
 - Lint verificado con `npm.cmd run lint`.
+- Schema verificado con `npm.cmd run typeorm -- schema:log`, sin queries pendientes.
 - Endpoints verificados localmente:
-  - `GET /users`
-  - `POST /users`
-  - `PATCH /users/:id`
-  - `DELETE /users/:id`
+  - `GET /members`
+  - `POST /members`
+  - `PATCH /members/:id`
+  - `DELETE /members/:id`
   - `GET /task-categories`
   - `POST /task-categories`
   - `DELETE /task-categories/:id`
@@ -261,7 +262,7 @@ Resultado:
   - que cada posición sea un entero mayor o igual a `1`.
 - `PUT /tasks/:taskId/rotation` reemplaza la rotación completa de una tarea dentro de una transacción.
 - `GET /tasks/:taskId/rotation` consulta la rotación ordenada por posición.
-- `DELETE /tasks/:taskId/rotation/:userId` elimina un miembro de la rotación.
+- `DELETE /tasks/:taskId/rotation/:memberId` elimina un miembro de la rotación.
 - `TaskRotationsModule` registrado en `AppModule`.
 - Build verificado con `npm.cmd run build`.
 - Tests verificados con `npm.cmd test`.
@@ -269,11 +270,46 @@ Resultado:
 - Endpoints verificados localmente:
   - `PUT /tasks/:taskId/rotation`
   - `GET /tasks/:taskId/rotation`
-  - `DELETE /tasks/:taskId/rotation/:userId`
+  - `DELETE /tasks/:taskId/rotation/:memberId`
 
 Nota:
 
 - Para no ensuciar la base local, los datos temporales usados en la verificación fueron limpiados al finalizar la prueba.
+
+## Trabajo transversal: refactor `users` a `family_members`
+
+Objetivo:
+
+- Separar correctamente el concepto de cuenta de login del concepto de miembro/perfil familiar antes de implementar autenticación.
+
+Resultado:
+
+- Se decidió que `UserAccount` será la entidad futura para correo + contraseña.
+- Se renombró el concepto actual de `users` a `family_members`.
+- Se creó el módulo `members` en lugar de `users`.
+- Se eliminaron los endpoints `/users` y fueron reemplazados por `/members`.
+- Se actualizó `task_rotation_members`:
+  - `user_id` pasó a `member_id`.
+- Se actualizó `task_assignments`:
+  - `assigned_user_id` pasó a `assigned_member_id`.
+- Se actualizó `task_assignment_logs`:
+  - `changed_by_user_id` pasó a `changed_by_member_id`.
+- Se creó y ejecutó la migración:
+  - `src/database/migrations/1781810000000-RenameUsersToFamilyMembers.ts`
+- Migraciones verificadas con `npm.cmd run typeorm -- migration:show`.
+- Build verificado con `npm.cmd run build`.
+- Tests verificados con `npm.cmd test`.
+- Lint verificado con `npm.cmd run lint`.
+- Endpoints verificados localmente:
+  - `POST /members`
+  - `GET /members`
+  - `PUT /tasks/:taskId/rotation` usando `memberId`
+  - `GET /tasks/:taskId/rotation`
+  - `DELETE /tasks/:taskId/rotation/:memberId`
+
+Nota:
+
+- Este refactor es previo a auth. Evita mezclar “cuenta que inicia sesión” con “perfil/miembro familiar”, igual que Netflix separa cuenta de perfiles.
 
 ## Trabajo transversal: Swagger / OpenAPI
 
@@ -296,7 +332,7 @@ Resultado:
 - Verificado con `npm.cmd run lint`.
 - Verificado levantando la app y consultando `/api-json`, con respuesta `200` y `9` rutas documentadas.
 - DTOs documentados con `@ApiProperty` y `@ApiPropertyOptional` para que Swagger muestre propiedades y `Example Value` correctamente en:
-  - users
+  - members
   - task-categories
   - tasks
   - task-rotations
@@ -304,6 +340,41 @@ Resultado:
 Nota:
 
 - Este cambio no reemplaza la Fase 8. Es una mejora transversal para poder revisar y probar mejor los endpoints ya construidos y los que siguen.
+
+## Trabajo transversal: Autenticación familiar - Fase 1
+
+Objetivo:
+
+- Crear la base de cuenta familiar con `user_accounts`, manteniendo separados los perfiles `family_members`.
+
+Resultado:
+
+- Entidades creadas:
+  - `Family`
+  - `UserAccount`
+  - `RefreshToken`
+  - `MemberPin`
+- `family_members` ahora pertenece a una familia y soporta rol, avatar/color/icono e indicador admin.
+- Migración aplicada:
+  - `AddFamilyAuthSchema1781815000000`
+- Endpoints implementados:
+  - `POST /auth/register`
+  - `POST /auth/login`
+  - `POST /auth/refresh`
+  - `POST /auth/logout`
+- Verificado con:
+  - `npm.cmd run build`
+  - `npm.cmd test`
+  - `npm.cmd run lint`
+  - `npm.cmd run typeorm -- schema:log`
+  - prueba funcional de register/login/refresh/logout.
+
+Pendiente:
+
+- Agregar guards JWT.
+- Implementar `GET /families/current`.
+- Ajustar `/members` para resolver la familia desde el token.
+- Implementar login de perfil con PIN.
 
 ## Fase 8: Generación de asignaciones
 
@@ -354,3 +425,4 @@ Checklist:
 ## Regla de avance
 
 No avanzar a una fase nueva sin haber verificado la anterior. La idea no es correr: es construir base sólida. Una API mal modelada se paga después con intereses.
+
